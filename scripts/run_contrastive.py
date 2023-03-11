@@ -14,7 +14,9 @@ from atariari.methods.encoders import NatureCNN, ImpalaCNN
 from atariari.methods.cpc import CPCTrainer
 from atariari.methods.vae import VAETrainer
 from atariari.methods.no_action_feedforward_predictor import NaFFPredictorTrainer
+from atariari.methods.stdim_with_mask import InfoNCESpatioTemporalTrainer_with_dropout
 from atariari.methods.stdim import InfoNCESpatioTemporalTrainer
+
 import wandb
 from atariari.benchmark.episodes import get_episodes
 
@@ -59,6 +61,8 @@ def train_encoder(args):
         trainer = GlobalInfoNCESpatioTemporalTrainer(encoder, config, device=device, wandb=wandb)
     elif args.method == "global-local-infonce-stdim":
         trainer = GlobalLocalInfoNCESpatioTemporalTrainer(encoder, config, device=device, wandb=wandb)
+    elif args.method == "infonce-stdim-with-wask":
+        trainer = InfoNCESpatioTemporalTrainer_with_dropout(encoder, config, device=device, wandb=wandb)
     elif args.method == "dim":
         trainer = DIMTrainer(encoder, config, device=device, wandb=wandb)
     else:

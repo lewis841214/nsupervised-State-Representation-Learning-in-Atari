@@ -1,5 +1,17 @@
 # Unsupervised State Representation Learning in Atari
 
+
+
+
+Testing info-nce-stdim with mask
+```
+python -m scripts.run_probe --method infonce-stdim --env-name PongNoFrameskip-v4
+
+```
+
+
+
+
 Ankesh Anand*, Evan Racah*, Sherjil Ozair*, Yoshua Bengio, Marc-Alexandre Côté, R Devon Hjelm
 
 This repo provides code for the benchmark and techniques introduced in the paper [Unsupervised State Representation Learning in Atari](https://arxiv.org/abs/1906.08226)

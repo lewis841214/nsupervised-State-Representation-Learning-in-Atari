@@ -3,9 +3,43 @@ wandb
 opencv-python
 scikit-learn
 
+
+# conda create --name RLAtari python=3.7
+# conda activate RLAtari
+# pip install gym==0.21.0
+# pip install 'gym[atari]'
+# pip install --trusted-host pypi.org --trusted-host pypi.python.org --trusted-host files.pythonhosted.org autorom==0.5.5
+# AutoROM --accept-license # Failed
+# Follow https://github.com/openai/gym/issues/3170#issuecomment-1427040869 to set ROM
+# AutoROM --accept-license --source-file  Roms.tar.gz
+# pip install gym[accept-rom-license]
 # pip install torch==1.8.1+cu101 torchvision==0.9.1+cu101 torchaudio==0.8.1 -f https://download.pytorch.org/whl/torch_stable.html
-# pip install tensorflow==1.15：
-# pip install git+git://github.com/openai/baselines
+# pip install scikit-learn
+
+# pip install tensorflow==1.15
+# pip install opencv-python
+# pip install git+https://github.com/openai/baselines.git --user
+# pip install git+https://github.com/ankeshanand/pytorch-a2c-ppo-acktr-gail
+# pip install -r requirements.txt
+# pip install git+https://github.com/mila-iqia/atari-representation-learning.git
+
+
+
+# pip install pyproject-toml
+# pip install --upgrade pip setuptools wheel
+
+# 
 # pip install git+git://github.com/ankeshanand/pytorch-a2c-ppo-acktr-gail
 # pip install -r requirements.txt
 # pip install git+git://github.com/mila-iqia/atari-representation-learning.git
+# pip uninstall protobuf
+# pip install protobuf==3.19.0
+
+# ROM error:
+#Download http://www.atarimania.com/rom_collection_archive_atari_2600_roms.html
+# extract in floder Roms
+# python -m atari_py.import_roms C:\Users\ME\Downloads\Roms\ROMS
+
+ 
+
+# Testing: python -m scripts.run_probe --method infonce-stdim --env-name PongNoFrameskip-v4
