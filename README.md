@@ -5,7 +5,7 @@
 
 Testing info-nce-stdim with mask
 ```
-python -m scripts.run_probe --method infonce-stdim --env-name PongNoFrameskip-v4
+python -m scripts.run_probe --method infonce-stdim-with-wask --env-name PongNoFrameskip-v4
 
 ```
 
