@@ -15,6 +15,7 @@ from atariari.methods.cpc import CPCTrainer
 from atariari.methods.vae import VAETrainer
 from atariari.methods.no_action_feedforward_predictor import NaFFPredictorTrainer
 from atariari.methods.stdim_with_mask import InfoNCESpatioTemporalTrainer_with_dropout
+from atariari.methods.stdim_with_entropyCA import InfoNCESpatioTemporalTrainer_ECA
 from atariari.methods.stdim import InfoNCESpatioTemporalTrainer
 
 import wandb
@@ -23,6 +24,7 @@ from atariari.benchmark.episodes import get_episodes
 
 def train_encoder(args):
     device = torch.device("cuda:" + str(args.cuda_id) if torch.cuda.is_available() else "cpu")
+    breakpoint()
     tr_eps, val_eps = get_episodes(steps=args.pretraining_steps,
                                  env_name=args.env_name,
                                  seed=args.seed,
@@ -63,6 +65,8 @@ def train_encoder(args):
         trainer = GlobalLocalInfoNCESpatioTemporalTrainer(encoder, config, device=device, wandb=wandb)
     elif args.method == "infonce-stdim-with-wask":
         trainer = InfoNCESpatioTemporalTrainer_with_dropout(encoder, config, device=device, wandb=wandb)
+    elif args.method == "infonce-stdim-with-ECA":
+        trainer = InfoNCESpatioTemporalTrainer_ECA(encoder, config, device=device, wandb=wandb)
     elif args.method == "dim":
         trainer = DIMTrainer(encoder, config, device=device, wandb=wandb)
     else:

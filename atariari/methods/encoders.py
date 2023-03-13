@@ -148,6 +148,8 @@ class NatureCNN(nn.Module):
     def forward(self, inputs, fmaps=False):
         f5 = self.main[:6](inputs)
         f7 = self.main[6:8](f5)
+        # print('self.main[6:8]', self.main[6:8])
+        # print('f5', f5.shape)
         out = self.main[8:](f7)
         if self.end_with_relu:
             assert self.args.method != "vae", "can't end with relu and use vae!"
@@ -159,6 +161,32 @@ class NatureCNN(nn.Module):
                 'out': out
             }
         return out
+    
+
+
+class NatureCNN_Decoder(nn.Module):
+
+    def __init__(self, input_channels, args):
+        super().__init__()
+        self.final_conv_size = 64 * 9 * 6
+        self.final_conv_shape = (64, 9, 6)
+        init_ = lambda m: init(m,
+                nn.init.orthogonal_,
+                lambda x: nn.init.constant_(x, 0),
+                nn.init.calculate_gain('relu'))
+        self.main = nn.Sequential(
+            init_(nn.Conv2d(input_channels, 32, 8, stride=4)),
+            nn.ReLU(),
+            init_(nn.Conv2d(32, 64, 4, stride=2)),
+            nn.ReLU(),
+            init_(nn.Conv2d(64, 128, 4, stride=2)),
+            nn.ReLU(),
+            init_(nn.Conv2d(128, 64, 3, stride=1)),
+            nn.ReLU(),
+            Flatten(),
+            init_(nn.Linear(self.final_conv_size, self.feature_size)),
+            #nn.ReLU()
+        )
 
 
 

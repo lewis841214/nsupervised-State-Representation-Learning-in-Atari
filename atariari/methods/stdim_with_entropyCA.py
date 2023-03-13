@@ -12,7 +12,7 @@ from .trainer import Trainer
 from .utils import EarlyStopping
 from torchvision import transforms
 import torchvision.transforms.functional as TF
-
+from .pytorch_unet import UNet
 
 class Classifier(nn.Module):
     def __init__(self, num_inputs1, num_inputs2):
@@ -23,7 +23,7 @@ class Classifier(nn.Module):
         return self.network(x1, x2)
 
 
-class InfoNCESpatioTemporalTrainer_with_dropout(Trainer):
+class InfoNCESpatioTemporalTrainer_ECA(Trainer):
     def __init__(self, encoder, config, device=torch.device('cpu'), wandb=None):
         # breakpoint()
         super().__init__(encoder, wandb, device)
@@ -80,36 +80,15 @@ class InfoNCESpatioTemporalTrainer_with_dropout(Trainer):
             x_t = x_t * mask
             
             '''
-            m = 20
-            p = 0.8
-            device = x_t.device
-            def CreateM_Mask(m, p = 0.8, device = 'cpu'): # p is the pro. that is 1
-                mm_mask = torch.rand((m,m)).to(device)
-                mm_mask = (torch.rand(mm_mask.shape) > (1-p)).int()
-                return mm_mask
-            def CreateAllMask(X_t_Sahpe, m, p, device):
-                mask = torch.rand(X_t_Sahpe) * 0
-                mask = mask.to(device)
-                mm_mask = CreateM_Mask(m + 1, p , device )
-                h, w = X_t_Sahpe[-2], X_t_Sahpe[-1]
-                h_len = int(h/m)
-                w_len = int(w/m)
-                # breakpoint()
-                for i in range(m + 1):
-                    for j in range(m+ 1):
-                        mask[:, :, i * h_len : (i+1)*h_len , j * w_len : (j+1)*w_len] = mm_mask[i][j]
-                # breakpoint()
-                return mask
-            print('self.encoder', self.encoder)
-            # breakpoint()
-            mask = CreateAllMask(x_t.shape, m, p, device)
             
-            x_t = x_t * mask
-            x_tprev = x_tprev * mask
 
             f_t_maps, f_t_prev_maps = self.encoder(x_t, fmaps=True), self.encoder(x_tprev, fmaps=True)
             
-    
+            UnetModel = UNet(n_class= 1)
+            f_t_mask = UnetModel(x_t)
+            f_t_prev_mask = UnetModel(x_tprev)
+            breakpoint()
+
             # Loss 1: Global at time t, f5 patches at time t-1
             f_t, f_t_prev = f_t_maps['out'], f_t_prev_maps['f5']
             sy = f_t_prev.size(1)
