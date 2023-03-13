@@ -31,11 +31,15 @@ class InfoNCESpatioTemporalTrainer_ECA(Trainer):
         self.patience = self.config["patience"]
         self.classifier1 = nn.Linear(self.encoder.hidden_size, self.encoder.local_layer_depth).to(device)  # x1 = global, x2=patch, n_channels = 32
         self.classifier2 = nn.Linear(self.encoder.local_layer_depth, self.encoder.local_layer_depth).to(device)
+        self.UnetModel = UNet(n_class= 1).to(device)
+
         self.epochs = config['epochs']
         self.batch_size = config['batch_size']
         self.device = device
         self.optimizer = torch.optim.Adam(list(self.classifier1.parameters()) + list(self.encoder.parameters()) +
                                           list(self.classifier2.parameters()),
+                                          lr=config['lr'], eps=1e-5)
+        self.MaskOptim = torch.optim.Adam(list(self.UnetModel.parameters()),
                                           lr=config['lr'], eps=1e-5)
         self.early_stopper = EarlyStopping(patience=self.patience, verbose=False, wandb=self.wandb, name="encoder")
         self.transform = transforms.Compose([Cutout(n_holes=1, length=80)])
@@ -67,6 +71,7 @@ class InfoNCESpatioTemporalTrainer_ECA(Trainer):
         accuracy1, accuracy2 = 0., 0.
         epoch_loss1, epoch_loss2 = 0., 0.
         data_generator = self.generate_batch(episodes)
+        
         for x_t, x_tprev in data_generator:
             # breakpoint()
             # Here we add a mask to encourage feature map to look at more positions
@@ -84,9 +89,10 @@ class InfoNCESpatioTemporalTrainer_ECA(Trainer):
 
             f_t_maps, f_t_prev_maps = self.encoder(x_t, fmaps=True), self.encoder(x_tprev, fmaps=True)
             
-            UnetModel = UNet(n_class= 1)
-            f_t_mask = UnetModel(x_t)
-            f_t_prev_mask = UnetModel(x_tprev)
+            
+            f_t_mask = self.UnetModel (x_t)
+            f_t_prev_mask = self.UnetModel (x_tprev)
+            RegionLoss = torch.sum(f_t_mask)
             breakpoint()
 
             # Loss 1: Global at time t, f5 patches at time t-1

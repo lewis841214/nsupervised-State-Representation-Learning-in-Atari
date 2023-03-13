@@ -29,7 +29,7 @@ class UNet(nn.Module):
         self.dconv_up1 = double_conv(32 + 16, 16)
         
         self.conv_last = nn.Conv2d(16, n_class, 1)
-        
+        self.SM = nn.Sigmoid()
         
     def forward(self, x):
         conv1 = self.dconv_down1(x)
@@ -62,5 +62,6 @@ class UNet(nn.Module):
         x = self.dconv_up1(x)
         
         out = self.conv_last(x)
+        out = self.SM(out)
         
         return out
